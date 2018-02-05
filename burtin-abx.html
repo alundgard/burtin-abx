@@ -19,13 +19,11 @@
 			background: #FCFCF9;
 		}
     </style>
-
 </head>
 
 <body>
 	<svg class="chart" width=800 height=900 ></svg>
 	<script>
-
 		var chart = d3.select(".chart"),
 			margin = {top: 50, right: 50, bottom: 50, left: 175},
 			width = +chart.attr("width") - margin.left - margin.right,
@@ -33,9 +31,9 @@
 			g = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 		var y0 = d3.scaleBand().rangeRound([0, height]).paddingInner(0.2); //
-		var y1 = d3.scaleBand().padding(0.0); //
+		var y1 = d3.scaleBand().padding(0); //
 		var x = d3.scaleLog().range([500, 0]); //
-		var z = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888"]); //
+		var z = d3.scaleOrdinal().range(["#b4cbea", "#8483ae", "#6c5b77"]); //
     	var w = d3.scaleOrdinal().range(["beige","gainsboro"]); //
 
     	d3.csv("data.csv", (error, data) => {
@@ -47,7 +45,7 @@
 
 			var keys = data.columns.slice(1).splice(0,3); // Antibiotics
 			console.log(keys);
-			var grams = ["positive", "negative"]
+			var grams = ["Positive", "Negative"]
 
 			//------------------------------------------------------------------
 			y0.domain(data.map((d) => { return d.Bacteria; }));
@@ -93,7 +91,6 @@
 					.attr("width", (d) => { return x(d.value); })
 					.attr("height", y1.bandwidth())
 					.style("fill", (d, i) => { return z(d.key) });
-			
 
 			//==================================================================
 			// Axes
@@ -101,17 +98,27 @@
 
 			//------------------------------------------------------------------
 			g.append("g")
-				.attr("class", "axis")
-				.call(d3.axisLeft(y0));
+					.attr("class", "axis")
+					.call(d3.axisLeft(y0))
+				// .append("text")
+				// .text("Bacteria")
+				// 	.attr("y", -30)
+				// 	.attr("x", 0)
+				// 	.attr("dx", "0.32em")
+				// 	.attr("fill", "#000")
+				// 	.attr("font-weight", "bold")
+				// 	.attr("text-anchor", "start")
+				// 	.attr("transform", "rotate(270)");
+
 
 			//------------------------------------------------------------------
 			g.append("g")
 					.attr("class", "axis")
 					.call(d3.axisTop(x).ticks(5, ",.3f"))
 				.append("text")
-				.text("MIC")
-					.attr("y", -10)
-					.attr("x", x(x.ticks().pop()) + 10)
+				.text("Antibiotic Effectiveness (Minimum Inhibitory Concentration)")
+					.attr("y", -30)
+					.attr("x", 125)
 					.attr("dx", "0.32em")
 					.attr("fill", "#000")
 					.attr("font-weight", "bold")
@@ -122,7 +129,7 @@
 			//==================================================================
 
 			//------------------------------------------------------------------
-			var legend = g.append("g")
+			var abx = g.append("g")
 				.attr("font-family", "sans-serif")
 				.attr("font-size", 10)
 				.attr("text-anchor", "end")
@@ -131,13 +138,13 @@
 			.enter().append("g")
 				.attr("transform", (d, i) => { return "translate(20," +((i * 20) + 50)+ ")"; });
 
-			legend.append("rect")
-				.attr("x", width - 19)
-				.attr("width", 19)
-				.attr("height", 19)
+			abx.append("rect")
+				.attr("x", width - 20)
+				.attr("width", 20)
+				.attr("height", 20)
 				.attr("fill", z);
 
-			legend.append("text")
+			abx.append("text")
 				.attr("x", width - 24)
 				.attr("y", 9.5)
 				.attr("dy", "0.32em")
@@ -154,9 +161,9 @@
 				.attr("transform", (d, i) => { return "translate(20," + ((i * 20) + 500) + ")"; });
 
 			gstain.append("rect")
-				.attr("x", width - 19)
-				.attr("width", 19)
-				.attr("height", 19)
+				.attr("x", width - 20)
+				.attr("width", 20)
+				.attr("height", 20)
 				.attr("fill", w);
 
 			gstain.append("text")
