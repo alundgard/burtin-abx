@@ -23,7 +23,7 @@
 </head>
 
 <body>
-	<svg class="chart" width=800 height=700 ></svg>
+	<svg class="chart" width=800 height=900 ></svg>
 	<script>
 
 		var chart = d3.select(".chart"),
@@ -32,13 +32,11 @@
 			height = +chart.attr("height") - margin.top - margin.bottom;
 			g = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		var y0 = d3.scaleBand().rangeRound([0, height]).paddingInner(0.1); //
-		var y1 = d3.scaleBand().padding(0.05); //
+		var y0 = d3.scaleBand().rangeRound([0, height]).paddingInner(0.2); //
+		var y1 = d3.scaleBand().padding(0.0); //
 		var x = d3.scaleLog().range([500, 0]); //
-		var z = d3.scaleOrdinal()
-    		.range(
-       			["#98abc5", "#8a89a6", "#d0743c", "#ff8c00"]
-    		);
+		var z = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888"]); //
+    	var w = d3.scaleOrdinal().range(["beige","gainsboro"]); //
 
     	d3.csv("data.csv", (error, data) => {
 			if (error) throw error;
@@ -48,6 +46,8 @@
 			data.sort(GS); // Order by Gram Staining
 
 			var keys = data.columns.slice(1).splice(0,3); // Antibiotics
+			console.log(keys);
+			var grams = ["positive", "negative"]
 
 			//------------------------------------------------------------------
 			y0.domain(data.map((d) => { return d.Bacteria; }));
@@ -62,7 +62,20 @@
 			//==================================================================
 
 			//------------------------------------------------------------------
-			// MIC
+			// Gram Staining
+			g.append("g")
+				.selectAll("g")
+				.data(data)
+				.enter().append("g")
+    			.attr("transform", (d, i) => { return "translate(0," + y0(d.Bacteria) + ")"; })
+				.append("rect")
+					.attr("width", width - 75) // FIXME! Hardcode
+					.attr("height", y0.bandwidth() + 10) // FIXME! Hardcode
+					.style("fill", (d) => { return w(d.Gram_Staining) });
+
+			//------------------------------------------------------------------
+			// Minimum Inhibitory Concentration (MIC)
+			
 			g.append("g")
 				.selectAll("g")
 				.data(data)
@@ -79,11 +92,8 @@
 					.attr("x", (d, i) => { x(d.value) })
 					.attr("width", (d) => { return x(d.value); })
 					.attr("height", y1.bandwidth())
-					.style("fill", (d, i) => { return z(d.key) })
-
-			//------------------------------------------------------------------
-			// Gram Staining
-
+					.style("fill", (d, i) => { return z(d.key) });
+			
 
 			//==================================================================
 			// Axes
@@ -111,14 +121,15 @@
 			// Legends
 			//==================================================================
 
+			//------------------------------------------------------------------
 			var legend = g.append("g")
 				.attr("font-family", "sans-serif")
 				.attr("font-size", 10)
 				.attr("text-anchor", "end")
 			.selectAll("g")
-			.data(keys.slice().reverse())
+			.data(keys.slice())
 			.enter().append("g")
-				.attr("transform", (d, i) => { return "translate(0," + i * 20 + ")"; });
+				.attr("transform", (d, i) => { return "translate(20," +((i * 20) + 50)+ ")"; });
 
 			legend.append("rect")
 				.attr("x", width - 19)
@@ -131,6 +142,29 @@
 				.attr("y", 9.5)
 				.attr("dy", "0.32em")
 				.text((d) => { return d; });
+
+			//------------------------------------------------------------------
+			var gstain = g.append("g")
+				.attr("font-family", "sans-serif")
+				.attr("font-size", 10)
+				.attr("text-anchor", "end")
+			.selectAll("g")
+			.data(grams.reverse())
+			.enter().append("g")
+				.attr("transform", (d, i) => { return "translate(20," + ((i * 20) + 500) + ")"; });
+
+			gstain.append("rect")
+				.attr("x", width - 19)
+				.attr("width", 19)
+				.attr("height", 19)
+				.attr("fill", w);
+
+			gstain.append("text")
+				.attr("x", width - 24)
+				.attr("y", 9.5)
+				.attr("dy", "0.32em")
+				.text((d) => { return d; });
+
 		});
 
 	</script>
