@@ -18,6 +18,15 @@
 			border: 1px solid gainsboro;
 			background: #FCFCF9;
 		}
+		.grid line {
+			stroke: gray;
+			stroke-opacity: 0.7;
+			shape-rendering: crispEdges;
+		}
+
+		.grid path {
+			stroke-width: 0;
+		}
     </style>
 </head>
 
@@ -70,6 +79,19 @@
 					.attr("width", width - 75) // FIXME! Hardcode
 					.attr("height", y0.bandwidth() + 10) // FIXME! Hardcode
 					.style("fill", (d) => { return w(d.Gram_Staining) });
+
+			//------------------------------------------------------------------
+			// Gridlines
+			function make_y_gridlines() {
+				return d3.axisBottom(x).ticks(5)
+			}
+
+			g.append("g")
+				.attr("class", "grid")
+				.call(make_y_gridlines()
+				.tickSize(height)
+				.tickFormat("")
+			)
 
 			//------------------------------------------------------------------
 			// Minimum Inhibitory Concentration (MIC)
@@ -171,6 +193,7 @@
 				.attr("y", 9.5)
 				.attr("dy", "0.32em")
 				.text((d) => { return d; });
+
 
 		});
 
