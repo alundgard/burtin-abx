@@ -32,24 +32,25 @@
         var spec = {
             "$schema":"https://vega.github.io/schema/vega-lite/v2.json",
             "data": {
-                "url":"data.csv",
-                "format": {
-                    "type":"csv"
-                }
+                "url": "data.csv",
+                "format": { "type":"csv" }
             },
-            "mark":"bar",
+            "transform": [
+                {"calculate": "datum.Penicilin", "as": "dat"}
+            ],
+            "mark": "bar",
             "encoding": {
+                "row": {
+                    "field": "Bacteria", "type": "nominal"
+                },
+                // "y": {
+                //     "field": "Penicilin",
+                //     "type": "quantitative"
+                // },
                 "x": {
-                    "field":"Bacteria",
-                    "type":"nominal"
-                },
-                "y": {
-                    "field":"Penicilin",
-                    "type":"quantitative"
-                },
-                "y2": {
-                    "field":"Streptomycin",
-                    "type":"quantitative"
+                    "field": "dat", 
+                    "type": "quantitative",
+                    "scale": {"type": "log"}
                 },
             },
             "width": width

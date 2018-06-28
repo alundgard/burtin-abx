@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Burtin Vega</title>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vega@4.0.0-rc.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@2.5.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.15.0"></script>
+</head>
+<body>
+    <div id="chart"></div>
+    <script>
+        var spec = {
+            "$schema": "https://vega.github.io/schema/vega/v4.json",
+            "width": 400,
+            "height": 200,
+            "padding": 5,
+
+            "data": [
+                {
+                "name": "table",
+                "url": "data.csv",
+                "format": {"type": "csv"}
+                }
+            ],
+
+            "scales": [
+                {
+                    "name": "yscale",
+                    "type": "band",
+                    "domain": {"data": "table", "field": "Bacteria"},
+                    "range": "height",
+                    "padding": 0.5
+                },
+                {
+                    "name": "xscale",
+                    "type": "linear",
+                    "domain": {"data": "table", "field": "Penicilin"},
+                    "range": "width",
+                    "zero": true,
+                    "nice": true
+                }
+            ],
+
+            "axes": [
+                { "orient": "left", "scale": "yscale" },
+                { "orient": "bottom", "scale": "xscale" }
+            ],
+
+            "marks": [{
+                "type": "rect",
+                "from": {"data":"table"},
+                "encode": {
+                    "enter": {
+                        "y": {"scale": "yscale", "field": "Bacteria"},
+                        "height ": {"scale": "yscale", "band": 1},
+                        "x": {"scale": "xscale", "field": "Penicilin"},
+                        "x2": {"scale": "xscale", "value": 0}
+                    },
+                    "update": {
+                        "fill": {"value": "steelblue"}
+                    },
+                    "hover": {
+                        "fill": {"value": "red"}
+                    }
+                }
+            }]
+        }
+        vegaEmbed("#chart", spec);
+    </script>
+</body>
+
+</html>
